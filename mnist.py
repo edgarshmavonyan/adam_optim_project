@@ -32,16 +32,19 @@ class Net(nn.Module):
         return output
 
 
-def train(model, device, train_loader, optimizer, epoch, log_interval=10):
+def train(model, device, train_loader, optimizer, epoch, log_interval=50):
     loss_list = []
     model.train()
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
-        optimizer.zero_grad()
-        output = model(data)
-        loss = F.nll_loss(output, target)
-        loss.backward()
-        optimizer.step()
+        def eval():
+            optimizer.zero_grad()
+            output = model(data)
+            loss = F.nll_loss(output, target)
+            loss.backward()
+            return loss
+        loss = eval()
+        optimizer.step(eval)
         if batch_idx % log_interval == 0:
             # print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
             #    epoch, batch_idx * len(data), len(train_loader.dataset),
