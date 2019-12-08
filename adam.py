@@ -23,19 +23,22 @@ class AdamOptimizer(torch.optim.Optimizer):
                 if len(state) == 0:
                     # init state
                     state['step'] = 0
-                    state['avg'] = 0
-                    state['sq_avg'] = 0
+                    state['avg'] = torch.zeros_like(param.data)
+                    state['sq_avg'] = torch.zeros_like(param.data)
 
                 # load current state
+                state['step'] += 1
                 step = state['step']
                 avg = state['avg']
                 sq_avg = state['sq_avg']
                 beta1, beta2 = param_group['beta']
                 eps = param_group['eps']
                 lr = param_group['lr']
+                l2 = param_group['l2']
 
                 # perform step
-                step += 1
+                if l2 != 0:
+                    grad.add_(l2 * param.data)
                 avg.mul_(beta1)
                 avg.add_((1 - beta1) * grad)
                 sq_avg.mul_(beta2)
