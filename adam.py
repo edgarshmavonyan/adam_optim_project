@@ -17,14 +17,14 @@ class AdamOptimizer(torch.optim.Optimizer):
             for param in param_group['params']:
                 if param.grad is None:
                     continue
-                grad = param.grad.data
+                grad = param.grad
                 state = self.state[param]
 
                 if len(state) == 0:
                     # init state
                     state['step'] = 0
-                    state['avg'] = torch.zeros_like(param.data)
-                    state['sq_avg'] = torch.zeros_like(param.data)
+                    state['avg'] = torch.zeros_like(param)
+                    state['sq_avg'] = torch.zeros_like(param)
 
                 # load current state
                 state['step'] += 1
@@ -38,7 +38,7 @@ class AdamOptimizer(torch.optim.Optimizer):
 
                 # perform step
                 if l2 != 0:
-                    grad.add_(l2 * param.data)
+                    grad.add_(l2 * param)
                 avg.mul_(beta1)
                 avg.add_((1 - beta1) * grad)
                 sq_avg.mul_(beta2)
@@ -46,6 +46,7 @@ class AdamOptimizer(torch.optim.Optimizer):
                 unbiased_avg = avg / (1 - beta1**step)
                 unbiased_sq_avg = sq_avg / (1 - beta2**step)
                 quotient = unbiased_avg / (unbiased_sq_avg.sqrt() + eps)
-                param.data.sub_(lr * quotient)
+                with torch.no_grad():
+                    param.sub_(lr * quotient)
 
         return loss
