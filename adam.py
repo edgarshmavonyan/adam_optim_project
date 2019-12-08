@@ -46,6 +46,6 @@ class AdamOptimizer(torch.optim.Optimizer):
                 unbiased_avg = avg / (1 - beta1**step)
                 unbiased_sq_avg = sq_avg / (1 - beta2**step)
                 quotient = unbiased_avg / (unbiased_sq_avg.sqrt() + eps)
-                param.sub_(lr * quotient)
+                param.data.sub_(lr * quotient)
 
         return loss
