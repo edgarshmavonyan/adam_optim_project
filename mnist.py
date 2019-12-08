@@ -51,10 +51,9 @@ def train(model, device, train_loader, optimizer, epoch, log_interval=10):
     return loss_list
 
 
-def MnistTest(optimizer, **optimizer_params):
+def MnistTest(optimizer, epochs=3, **optimizer_params):
     # Training settings
     batch_size = 64
-    epochs = 1
     use_cuda = torch.cuda.is_available()
 
     torch.manual_seed(42)
