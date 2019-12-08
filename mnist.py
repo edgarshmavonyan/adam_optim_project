@@ -80,4 +80,6 @@ def MnistTest(optimizer, **optimizer_params):
         loss.extend(cur_loss)
         #scheduler.step()
 
+    return loss
+
 #MnistTest(AdamOptimizer, )
